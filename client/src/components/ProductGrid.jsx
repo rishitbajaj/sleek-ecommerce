@@ -1,50 +1,60 @@
-import React from 'react';
-import { ShoppingCart, Star } from 'lucide-react';
-
-// Mock product data featuring minimalist aesthetics
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "Minimalist Leather Backpack",
-    category: "Travel",
-    price: 185.00,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    id: 2,
-    name: "Classic Chronograph Watch",
-    category: "Accessories",
-    price: 240.00,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    id: 3,
-    name: "Wireless Studio Headphones",
-    category: "Audio",
-    price: 299.00,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    id: 4,
-    name: "Scented Soy Wax Candle",
-    category: "Home",
-    price: 35.00,
-    rating: 4.6,
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?q=80&w=600&auto=format&fit=crop"
-  }
-];
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, Star, Loader2 } from 'lucide-react';
 
 export default function ProductGrid() {
+  // Setup state to hold data from the API
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from the Express backend as soon as the component loads
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching data: ", err);
+        setError("Failed to load products from the database.");
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Sleek loading animation placeholder screen
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+        <p className="text-sm font-light tracking-widest text-gray-500 uppercase">Loading Collection...</p>
+      </div>
+    );
+  }
+
+  // Graceful error display state
+  if (error) {
+    return (
+      <div className="text-center py-24">
+        <p className="text-red-500 font-medium">{error}</p>
+        <p className="text-xs text-gray-400 mt-2">Make sure your Node.js server is running on port 5000.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="py-12">
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-gray-100">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-brand-dark">Curated Essentials</h2>
-          <p className="text-sm text-gray-500 mt-1">Handpicked designs built to last a lifetime.</p>
+          <p className="text-sm text-gray-500 mt-1">Handpicked designs pulled dynamically from MongoDB.</p>
         </div>
         <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors mt-2 md:mt-0 block">
           View All Products &rarr;
@@ -53,8 +63,8 @@ export default function ProductGrid() {
 
       {/* Responsive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-        {PRODUCTS.map((product) => (
-          <div key={product.id} className="group relative flex flex-col justify-between">
+        {products.map((product) => (
+          <div key={product._id} className="group relative flex flex-col justify-between">
             {/* Image Wrapper */}
             <div className="w-full aspect-square overflow-hidden bg-gray-100 rounded-lg relative">
               <img
