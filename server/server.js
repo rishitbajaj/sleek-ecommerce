@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/userRoutes'); // 1. Import User Routes
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // API Routes
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes); // 2. Register Auth Routes
 
 // Base Route
 app.get('/', (req, res) => {
