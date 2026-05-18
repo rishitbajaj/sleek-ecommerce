@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link Component
 import { ShoppingCart, Star, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext'; 
 
@@ -53,21 +54,25 @@ export default function ProductGrid() {
           <h2 className="text-2xl font-bold tracking-tight text-brand-dark">Curated Essentials</h2>
           <p className="text-sm text-gray-500 mt-1">Handpicked designs pulled dynamically from MongoDB.</p>
         </div>
-        <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors mt-2 md:mt-0 block">
-          View All Products &rarr;
-        </a>
+        <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider mt-2 md:mt-0 block">
+          {products.length} Items Available
+        </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
         {products.map((product) => (
           <div key={product._id} className="group relative flex flex-col justify-between">
+            {/* LINK WRAPPER: Encloses image thumbnail for dynamic detail page tracking */}
             <div className="w-full aspect-square overflow-hidden bg-gray-100 rounded-lg relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
-                loading="lazy"
-              />
+              <Link to={`/product/${product._id}`}>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out cursor-pointer"
+                  loading="lazy"
+                />
+              </Link>
+              
               <button 
                 onClick={() => addToCart(product)}
                 className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm text-brand-dark text-xs font-semibold py-2.5 px-4 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-2 hover:bg-white z-20 cursor-pointer"
@@ -80,7 +85,10 @@ export default function ProductGrid() {
             <div className="mt-4 flex justify-between items-start">
               <div className="space-y-1">
                 <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">{product.category}</span>
-                <h3 className="text-sm font-medium text-brand-dark leading-tight">{product.name}</h3>
+                {/* TEXT LINK: User can also click product header name text */}
+                <h3 className="text-sm font-medium text-brand-dark leading-tight hover:text-blue-600 transition-colors">
+                  <Link to={`/product/${product._id}`}>{product.name}</Link>
+                </h3>
                 <div className="flex items-center space-x-1 pt-0.5">
                   <Star size={12} className="fill-amber-400 text-amber-400" />
                   <span className="text-xs text-gray-500 font-medium">{product.rating}</span>

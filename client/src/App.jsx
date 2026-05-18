@@ -5,7 +5,8 @@ import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
 import CartDrawer from './components/CartDrawer';
 import AuthPage from './pages/AuthPage';
-import CheckoutPage from './pages/CheckoutPage'; // Import Checkout Page
+import CheckoutPage from './pages/CheckoutPage';
+import ProductDetailPage from './pages/ProductDetailPage'; // Import Product Detail View
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -34,14 +35,17 @@ function App() {
           <div className="min-h-screen bg-brand-light text-brand-dark selection:bg-brand-accent selection:text-white">
             
             <Routes>
-              {/* Core Storefront View */}
+              {/* Core Catalog Shell */}
               <Route path="/" element={<HomePage onCartOpen={() => setIsCartOpen(true)} />} />
               
-              {/* Standalone Authentication Panel */}
+              {/* Session Controls Layout */}
               <Route path="/login" element={<AuthPage />} />
 
               {/* Secure Checkout Screen View */}
               <Route path="/checkout" element={<CheckoutPage />} />
+
+              {/* DYNAMIC VARIABLE IDENTIFIER PRODUCT ROUTE */}
+              <Route path="/product/:id" element={<ProductDetailPage />} />
             </Routes>
 
             {/* Slide-out Overlay System */}
