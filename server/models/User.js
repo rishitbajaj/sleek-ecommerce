@@ -9,16 +9,20 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Middleware: Automatically encrypt password before saving it
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+// FIX: In modern Mongoose async hooks, do not pass or call 'next'. 
+// Returning or completing the async execution advances the hook automatically.
+userSchema.pre('save', async function () {
+  // If the password field hasn't been changed or updated, exit early
+  if (!this.isModified('password')) {
+    return;
+  }
   
+  // Hash the password cleanly using standard await execution blocks
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
-// Helper: Method to check if entered password matches the encrypted database password
+// Helper Method: Safely evaluate passwords during login matching
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
