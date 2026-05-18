@@ -5,10 +5,10 @@ import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
 import CartDrawer from './components/CartDrawer';
 import AuthPage from './pages/AuthPage';
+import CheckoutPage from './pages/CheckoutPage'; // Import Checkout Page
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 
-// Hompage Layout Shell Component
 function HomePage({ onCartOpen }) {
   return (
     <>
@@ -34,14 +34,17 @@ function App() {
           <div className="min-h-screen bg-brand-light text-brand-dark selection:bg-brand-accent selection:text-white">
             
             <Routes>
-              {/* Core Landing Page Route */}
+              {/* Core Storefront View */}
               <Route path="/" element={<HomePage onCartOpen={() => setIsCartOpen(true)} />} />
               
-              {/* Standalone Authentication Screen View Route */}
+              {/* Standalone Authentication Panel */}
               <Route path="/login" element={<AuthPage />} />
+
+              {/* Secure Checkout Screen View */}
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
 
-            {/* Global Flyout Overlays */}
+            {/* Slide-out Overlay System */}
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
           </div>
         </CartProvider>

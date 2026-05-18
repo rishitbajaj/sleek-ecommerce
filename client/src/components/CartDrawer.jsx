@@ -1,11 +1,24 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import Router Redirect Hook
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext'; // Import Global Auth Hooks
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { cartItems, cartTotal, removeFromCart, addToCart, clearCart } = useCart();
+  const { isAuthenticated } = useAuth(); // Destructure login verification flag
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
+
+  const handleCheckoutRedirect = () => {
+    onClose(); // Instantly shut the sliding drawer panel view
+    if (isAuthenticated) {
+      navigate('/checkout'); // Route straight into the checkout terminal
+    } else {
+      navigate('/login'); // Intercept and re-route into registration/login
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -62,7 +75,6 @@ export default function CartDrawer({ isOpen, onClose }) {
 
                         {/* Complete Destruction Node */}
                         <button onClick={() => {
-                          // Complete programmatic eviction bypass layout rule
                           for(let i=0; i<item.qty; i++) removeFromCart(item._id);
                         }} className="flex items-center text-red-500 hover:text-red-600 font-medium cursor-pointer">
                           <Trash2 size={14} className="mr-1" />
@@ -85,7 +97,11 @@ export default function CartDrawer({ isOpen, onClose }) {
               </div>
               <p className="mt-0.5 text-xs text-gray-400">Shipping and taxes calculated at checkout.</p>
               <div className="mt-6">
-                <button className="w-full flex items-center justify-center rounded bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-xs hover:bg-blue-700 transition-colors uppercase tracking-wider cursor-pointer">
+                {/* INTERCEPTED AND PROTECTED CHECKOUT ROUTE ACTUATOR */}
+                <button 
+                  onClick={handleCheckoutRedirect}
+                  className="w-full flex items-center justify-center rounded bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-xs hover:bg-blue-700 transition-colors uppercase tracking-wider cursor-pointer"
+                >
                   Proceed To Checkout
                 </button>
               </div>
