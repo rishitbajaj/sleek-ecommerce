@@ -6,7 +6,7 @@ import ProductGrid from './components/ProductGrid';
 import CartDrawer from './components/CartDrawer';
 import AuthPage from './pages/AuthPage';
 import CheckoutPage from './pages/CheckoutPage';
-import ProductDetailPage from './pages/ProductDetailPage'; // Import Product Detail View
+import ProductDetailPage from './pages/ProductDetailPage';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -15,10 +15,10 @@ function HomePage({ onCartOpen }) {
     <>
       <Navbar onCartOpen={onCartOpen} />
       <Hero />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <ProductGrid />
       </main>
-      <footer className="bg-white border-t border-gray-100 py-8 mt-20 text-center text-xs text-gray-400 tracking-wider uppercase">
+      <footer className="bg-white border-t border-gray-100 py-12 mt-20 text-center text-xs text-gray-400 tracking-[0.2em] uppercase">
         &copy; 2026 Vélo Studio. All rights reserved.
       </footer>
     </>
@@ -32,23 +32,13 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <div className="min-h-screen bg-brand-light text-brand-dark selection:bg-brand-accent selection:text-white">
-            
+          <div className="min-h-screen bg-[#fafafa] text-slate-900 antialiased selection:bg-black selection:text-white">
             <Routes>
-              {/* Core Catalog Shell */}
               <Route path="/" element={<HomePage onCartOpen={() => setIsCartOpen(true)} />} />
-              
-              {/* Session Controls Layout */}
               <Route path="/login" element={<AuthPage />} />
-
-              {/* Secure Checkout Screen View */}
               <Route path="/checkout" element={<CheckoutPage />} />
-
-              {/* DYNAMIC VARIABLE IDENTIFIER PRODUCT ROUTE */}
               <Route path="/product/:id" element={<ProductDetailPage />} />
             </Routes>
-
-            {/* Slide-out Overlay System */}
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
           </div>
         </CartProvider>

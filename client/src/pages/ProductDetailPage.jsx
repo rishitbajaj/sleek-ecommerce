@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import { ArrowLeft, ShoppingBag, Star, ShieldCheck, Truck, RefreshCw, Loader2 } from 'lucide-react';
 
 export default function ProductDetailPage() {
-  const { id } = useParams(); // Capture the unique Mongo ID directly from the URL path
+  const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
@@ -15,137 +15,110 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
-        // Querying your Express API for the target ID document record
         const response = await fetch(`http://localhost:5000/api/products/${id}`);
-        if (!response.ok) {
-          throw new Error('Product not found or invalid database key.');
-        }
+        if (!response.ok) throw new Error('Specification matrix lookup failed');
         const data = await response.json();
         setProduct(data);
-        setLoading(false);
       } catch (err) {
-        console.error("Single product capture fault:", err);
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
-
     fetchSingleProduct();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-light flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="animate-spin text-blue-600" size={40} />
-        <p className="text-sm font-light tracking-widest text-gray-400 uppercase">Fetching Specifications...</p>
+      <div className="min-h-screen bg-[#fafafa] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="animate-spin text-slate-900" size={32} />
+        <p className="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase">Compiling Details...</p>
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-brand-light flex flex-col items-center justify-center p-4 text-center">
-        <p className="text-red-500 font-semibold mb-4">Error: {error || 'Item missing'}</p>
-        <Link to="/" className="text-xs font-bold text-blue-600 uppercase tracking-wider hover:underline">&larr; Return to Catalog</Link>
+      <div className="min-h-screen bg-[#fafafa] flex flex-col items-center justify-center p-4 text-center">
+        <div className="border border-red-100 bg-white p-8 rounded-xl max-w-sm space-y-4">
+          <p className="text-red-500 font-mono text-xs">{error}</p>
+          <Link to="/" className="block text-xs font-bold bg-slate-900 text-white py-3 uppercase tracking-widest hover:bg-slate-800">Return to Grid</Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-brand-light py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Navigation Breadcrumb */}
+    <div className="min-h-screen bg-[#fafafa] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
         <button 
           onClick={() => navigate('/')}
-          className="inline-flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-brand-dark mb-12 transition-colors cursor-pointer"
+          className="inline-flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-slate-900 mb-10 transition-colors cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Back to Grid Collection</span>
+          <span>Catalog Index</span>
         </button>
 
-        {/* Product Layout Grid Structure */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white p-8 rounded-2xl border border-gray-100 shadow-xs">
-          
-          {/* Left Wing: Hero Image Display */}
-          <div className="w-full aspect-square bg-gray-50 rounded-xl overflow-hidden border border-gray-50">
-            <img 
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover object-center transform hover:scale-102 transition-transform duration-500"
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-6 sm:p-10 rounded-2xl border border-gray-100 shadow-xs">
+          <div className="w-full aspect-[3/4] bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+            <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center" />
           </div>
 
-          {/* Right Wing: Core Meta Information Fields */}
-          <div className="flex flex-col justify-between space-y-8">
+          <div className="flex flex-col justify-between py-2 space-y-8">
             <div className="space-y-4">
-              <span className="text-xs font-black tracking-widest text-blue-600 uppercase">
-                {product.category} Collection
+              <span className="text-[10px] font-black tracking-[0.25em] text-blue-600 uppercase block bg-blue-50 w-max px-2.5 py-1 rounded">
+                {product.category}
               </span>
-              <h1 className="text-3xl font-black text-brand-dark tracking-tight leading-none uppercase">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight uppercase leading-tight">
                 {product.name}
               </h1>
               
-              {/* Product Quality Metrics */}
-              <div className="flex items-center space-x-2 pt-1">
+              <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      size={14} 
-                      className={`${i < Math.floor(product.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} 
-                    />
+                    <Star key={i} size={13} className={`fill-amber-400 text-amber-400`} />
                   ))}
                 </div>
-                <span className="text-xs font-bold text-gray-500">({product.rating || '5.0'} / 5.0 Customer Index)</span>
+                <span className="text-xs font-bold text-gray-400">({product.rating} Profile Rating)</span>
               </div>
 
-              {/* Pricing Display */}
-              <p className="text-2xl font-black text-brand-dark pt-2">
-                ${product.price ? product.price.toFixed(2) : '0.00'}
-              </p>
-
-              <hr className="border-gray-100 my-4" />
-
-              {/* Dynamic Description Box */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Overview Specifications</h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-light">
-                  {product.description || "Crafted using studio-grade architectural design frameworks. Engineered for baseline resilience, absolute material optimization, and premium long-form ergonomics suited for modern everyday deployment environments."}
+              <p className="text-2xl font-black text-slate-900 pt-2">${product.price.toFixed(2)}</p>
+              
+              <div className="pt-4 space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Description Blueprint</h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-light">
+                  {product.description || "Crafted using premium architectural composition frameworks. Formulated for resilient daily structural usage, optimized material load weight distribution, and functional aesthetic execution."}
                 </p>
               </div>
             </div>
 
-            {/* Practical Premium Badges and Interactive Cart Dispatch Actions */}
             <div className="space-y-6">
               <button 
                 onClick={() => addToCart(product)}
-                className="w-full flex items-center justify-center space-x-3 py-4 bg-brand-dark text-white text-xs font-bold uppercase tracking-widest rounded shadow-sm hover:bg-gray-800 transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center space-x-3 py-4 bg-slate-900 text-white text-xs font-bold uppercase tracking-widest rounded hover:bg-slate-800 transition-colors cursor-pointer shadow-sm hover:shadow-md"
               >
-                <ShoppingBag size={16} />
-                <span>Add Item To Shopping Bag</span>
+                <ShoppingBag size={14} />
+                <span>Secure Entry to Bag</span>
               </button>
 
-              {/* Studio Assurances Layer */}
-              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100 text-center">
-                <div className="flex flex-col items-center p-2 space-y-1">
-                  <Truck size={18} className="text-gray-400" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600">Free Courier</span>
+              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100 text-center text-gray-500">
+                <div className="flex flex-col items-center space-y-1">
+                  <Truck size={16} />
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Free Delivery</span>
                 </div>
-                <div className="flex flex-col items-center p-2 space-y-1">
-                  <RefreshCw size={18} className="text-gray-400" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600">30-Day Policy</span>
+                <div className="flex flex-col items-center space-y-1">
+                  <RefreshCw size={16} />
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Returns Window</span>
                 </div>
-                <div className="flex flex-col items-center p-2 space-y-1">
-                  <ShieldCheck size={18} className="text-gray-400" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600">Vélo Assured</span>
+                <div className="flex flex-col items-center space-y-1">
+                  <ShieldCheck size={16} />
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Vélo Certified</span>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   );
