@@ -4,7 +4,7 @@ const Order = require('../models/Order');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Inline Custom Authentication Gate Middleware
+// Inline Authentication Gate Middleware
 const protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -40,11 +40,20 @@ router.post('/', protect, async (req, res) => {
     });
 
     const createdOrder = await order.save();
-    console.log(`✨ [Database Log]: Order entry successfully committed to ledger: ${createdOrder._id}`);
     res.status(201).json(createdOrder);
   } catch (error) {
-    console.error('🔥 [Database Fault]: Failed to commit transaction:', error);
     res.status(500).json({ message: `Server transaction ledger fault: ${error.message}` });
+  }
+});
+
+// @desc    Fetch order documents matching the authenticated user profile
+// @route   GET /api/orders/myorders
+router.get('/myorders', protect, async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: `Failed to retrieve user ledger profile: ${error.message}` });
   }
 });
 

@@ -9,6 +9,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import ProfilePage from './pages/ProfilePage';
+
 
 function HomePage({ onCartOpen }) {
   return (
@@ -38,6 +40,7 @@ function App() {
               <Route path="/login" element={<AuthPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
           </div>
