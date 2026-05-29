@@ -1,53 +1,54 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
-import CartDrawer from './components/CartDrawer';
-import AuthPage from './pages/AuthPage';
-import CheckoutPage from './pages/CheckoutPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import { CartProvider } from './context/CartContext';
-import { AuthProvider } from './context/AuthContext';
+import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
+import ProductDetailPage from './pages/ProductDetailPage.jsx';
+import CheckoutPage from './pages/CheckoutPage.jsx';
 
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth() || {};
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FBFBFA] flex flex-col items-center justify-center text-zinc-400 font-medium text-xs space-y-2">
+        <div className="w-5 h-5 border-2 border-zinc-200 border-t-zinc-800 rounded-full animate-spin" />
+        <span>Verifying secure workspace parameters...</span>
+      </div>
+    );
+  }
+  return user ? children : <Navigate to="/login" replace />;
+};
 
-function HomePage({ onCartOpen }) {
-  return (
-    <>
-      <Navbar onCartOpen={onCartOpen} />
-      <Hero />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <ProductGrid />
-      </main>
-      <footer className="bg-white border-t border-gray-100 py-12 mt-20 text-center text-xs text-gray-400 tracking-[0.2em] uppercase">
-        &copy; 2026 Vélo Studio. All rights reserved.
-      </footer>
-    </>
-  );
-}
-
-function App() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
+export default function App() {
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
-          <div className="min-h-screen bg-[#fafafa] text-slate-900 antialiased selection:bg-black selection:text-white">
-            <Routes>
-              <Route path="/" element={<HomePage onCartOpen={() => setIsCartOpen(true)} />} />
-              <Route path="/login" element={<AuthPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/product/:id" element={<ProductDetailPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
-            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-          </div>
-        </CartProvider>
-      </AuthProvider>
+      <div className="min-h-screen bg-[#FBFBFA] text-[#1A1A1A] flex flex-col selection:bg-zinc-900 selection:text-white">
+        
+        {/* High-Fidelity Silk Modern Navbar Header */}
+        <Navbar />
+
+        {/* Main Viewport Content Route Dynamic Rendering Block Grid container matrix */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-6 sm:px-12 pt-8 pb-24 box-border">
+          <Routes>
+            <Route path="/" element={<ProductGrid />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} /> 
+            <Route path="/login" element={<LoginPage />} /> 
+            <Route path="/checkout" element={<CheckoutPage />} /> 
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        {/* Clean Luxury Fluid Footer Design Block Accent */}
+        <footer className="w-full py-8 border-t border-zinc-100 px-6 sm:px-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs font-medium text-zinc-400 select-none">
+          <span>Sleek Studio // Premium Minimal Architecture Platform Shell</span>
+          <span className="text-[#1A1A1A] font-semibold">© 2026 Studio Corp. All rights reserved.</span>
+        </footer>
+
+      </div>
     </Router>
   );
 }
-
-export default App;

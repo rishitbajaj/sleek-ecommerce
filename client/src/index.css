@@ -1,15 +1,34 @@
 @import "tailwindcss";
 
-body {
-  background-color: #f9f9f9;
-  color: #111111;
-  font-family: 'Inter', sans-serif;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* 📦 Premium Geometric Clean Typography Engine */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  body {
+    background-color: #FBFBFA; /* Premium Smooth Silk Pearl */
+    color: #1A1A1A; /* Soft Premium Charcoal Black */
+    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.25s ease-out forwards;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Smooth, elegant ease-out side sliding sheet drawer */
+@keyframes luxurySlide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-luxury-drawer {
+  animation: luxurySlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
